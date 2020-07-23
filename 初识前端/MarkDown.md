@@ -4,7 +4,7 @@ Markdown是一种类似于HTML的标记语言，但比HTML语法更简洁，通�
 
 
 
-##使用Markdown有哪些好处
+## 使用Markdown有哪些好处
 
 - 方便编辑：因为本身是纯文本格式，我们既可以使用记事本来编辑，也可以安装一些专用编辑器（Typora、webstorm...）都有对Markdown语法的支持。
 
@@ -22,7 +22,7 @@ Markdown是一种类似于HTML的标记语言，但比HTML语法更简洁，通�
   
   
 
-##Markdown编辑
+## Markdown编辑
 
 - [Typora](https://www.typora.io/)
 - vscode
@@ -225,7 +225,7 @@ Markdown是一种类似于HTML的标记语言，但比HTML语法更简洁，通�
 
 这里字体样式应该是`font-size: 14px;`
 
-#####代码块	
+##### 代码块	
 
 代码质检分别用`三个反引号`包起来，且两边的反引号独占一行
 
