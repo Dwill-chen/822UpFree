@@ -181,13 +181,13 @@ Markdown是一种类似于HTML的标记语言，但比HTML语法更简洁，通�
 
 本地图片
 
-![NBA](assets/NBA.jpg "NBA壁纸")
+![NBA](../assets/NBA.jpg "NBA壁纸")
 
 
 
 在线图片
 
-![卡通库里](assets/u=3794233070,3198057240&fm=26&gp=0.jpg "卡通库里")
+![卡通库里](https://dss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3794233070,3198057240&fm=26&gp=0.jpg "卡通库里")
 
 
 
