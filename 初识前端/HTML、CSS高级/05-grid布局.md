@@ -368,3 +368,294 @@ grid-template-areas: 'a . c'
 比如，区域名为header，则起始位置的水平网格线和垂直网格线叫做header-start，终止位置的水平网格线和垂直网格线叫做header-end。
 ```
 
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .item1 {
+            grid-area: a;
+        }
+        .item2 {
+            grid-area: b;
+        }
+        .item3 {
+            grid-area: c;
+        }
+        .item4 {
+            grid-area: d;
+        }
+        .item5 {
+            grid-area: e;
+        }
+        .item6 {
+            grid-area: f;
+        }
+        .item7 {
+            grid-area: g;
+        }
+        .item8 {
+            grid-area: h;
+        }
+        .item9 {
+            grid-area: i;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-areas: 'a a a a b'
+                                 'c c c c c'
+                                 'd e f f f'
+                                 'g h h h h'
+                                 'i i i i i';
+            grid-gap: 10px;
+            background-color: #2196F3;
+            padding: 10px;
+        }
+
+        .grid-container > div {
+            background-color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            padding: 20px 0;
+            font-size: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="grid-container">
+        <div class="item1">1</div>
+        <div class="item2">2</div>
+        <div class="item3">3</div>
+        <div class="item4">4</div>
+        <div class="item5">5</div>
+        <div class="item6">6</div>
+        <div class="item7">7</div>
+        <div class="item8">8</div>
+        <div class="item9">9</div>
+    </div>
+</body>
+
+</html>
+```
+
+![grid-templat-areas.png](./assets/grid-templat-areas.png "grid-templat-areas.png")
+
+[^ tips]: 1.grid-templat-areas中出现的名称，需要用grid-area提前先申明。2.同一个名称，不能换行，只能在同一行使用。3.在使用`.`或者名称的时，之前使用过的不能再使用，即不能a b a 这样，b后面只能跟没有出现过的名称。4.每一行名称数量要一致，不用名称时，使用`.`占位。以上问题，文档无说明，有更多或者如有错误，请指出。
+
+
+
+### 3.5 grid-auto-flow
+
+划分网格以后，容器的子元素会按照顺序，自动放置在每一个网格。默认的放置顺序是"先行后列"，即先填满第一行，再开始放入第二行，即下图数字的顺序。
+
+![img](./assets/bg2019032506-1599014856303.png)
+
+这个顺序由`grid-auto-flow`属性决定，默认值是`row`，即"先行后列"。也可以将它设成`column`，变成"先列后行"。
+
+```css
+grid-auto-flow: column;
+```
+
+[上面代码](https://jsbin.com/xutokec/edit?css,output)设置了`column`以后，放置顺序就变成了下图。
+
+![img](./assets/bg2019032512.png)
+
+`grid-auto-flow`属性除了设置成`row`和`column`，还可以设成`row dense`和`column dense`。这两个值主要用于，某些项目指定位置以后，剩下的项目怎么自动放置。
+
+[下面的例子](https://jsbin.com/wapejok/edit?css,output)让1号项目和2号项目各占据两个单元格，然后在默认的`grid-auto-flow: row`情况下，会产生下面这样的布局。
+
+![img](./assets/bg2019032513.png)
+
+上图中，1号项目后面的位置是空的，这是因为3号项目默认跟着2号项目，所以会排在2号项目后面。
+
+现在修改设置，设为`row dense`，表示"先行后列"，**并且尽可能紧密填满，尽量不出现空格**。
+
+```css
+grid-auto-flow: row dense;
+```
+
+[上面代码](https://jsbin.com/helewuy/edit?css,output)的效果如下。
+
+![img](./assets/bg2019032514.png)
+
+上图会先填满第一行，再填满第二行，所以3号项目就会紧跟在1号项目的后面。8号项目和9号项目就会排到第四行。
+
+如果将设置改为`column dense`，表示"先列后行"，并且尽量填满空格。
+
+```css
+grid-auto-flow: column dense;
+```
+
+[上面代码](https://jsbin.com/pupoduc/1/edit?html,css,output)的效果如下。
+
+![img](./assets/bg2019032515.png)
+
+上图会先填满第一列，再填满第2列，所以3号项目在第一列，4号项目在第二列。8号项目和9号项目被挤到了第四列。
+
+
+
+### 3.6 justify-items 属性， align-items 属性， place-items 属性
+
+`justify-items`属性设置单元格内容的水平位置（左中右），`align-items`属性设置单元格内容的垂直位置（上中下）。
+
+```css
+.container {
+  justify-items: start | end | center | stretch;
+  align-items: start | end | center | stretch;
+}
+```
+
+这两个属性的写法完全相同，都可以取下面这些值。
+
+- start：对齐单元格的起始边缘。
+- end：对齐单元格的结束边缘。
+- center：单元格内部居中。
+- stretch：拉伸，占满单元格的整个宽度（默认值）。
+
+```css
+.container {
+  justify-items: start;
+}
+```
+
+[上面代码](https://jsbin.com/gijeqej/edit?css,output)表示，单元格的内容左对齐，效果如下图。
+
+![img](./assets/bg2019032516.png)
+
+```css
+.container {
+  align-items: start;
+}
+```
+
+[上面代码](https://jsbin.com/tecawur/edit?css,output)表示，单元格的内容头部对齐，效果如下图。
+
+![img](./assets/bg2019032517.png)
+
+`place-items`属性是`align-items`属性和`justify-items`属性的合并简写形式。
+
+```css
+place-items: <align-items> <justify-items>;
+```
+
+下面是一个例子。
+
+```css
+place-items: start end;
+```
+
+如果省略第二个值，则浏览器认为与第一个值相等。
+
+
+
+### 3,7 justify-content 属性， align-content 属性， place-content 属性
+
+`justify-content`属性是整个内容区域在容器里面的水平位置（左中右），`align-content`属性是整个内容区域的垂直位置（上中下）。
+
+```css
+.container {
+  justify-content: start | end | center | stretch | space-around | space-between | space-evenly;
+  align-content: start | end | center | stretch | space-around | space-between | space-evenly;  
+}
+```
+
+这两个属性的写法完全相同，都可以取下面这些值。（下面的图都以`justify-content`属性为例，`align-content`属性的图完全一样，只是将水平方向改成垂直方向。）
+
+
+
+- start - 对齐容器的起始边框。
+
+![img](./assets/bg2019032519.png)
+
+
+
+- end - 对齐容器的结束边框。
+
+![img](./assets/bg2019032518.png)
+
+
+
+- center - 容器内部居中。
+
+![img](./assets/bg2019032520.png)
+
+
+
+- stretch - 项目大小没有指定时，拉伸占据整个网格容器。
+
+![img](./assets/bg2019032521.png)
+
+
+
+- space-around - 每个项目两侧的间隔相等。所以，项目之间的间隔比项目与容器边框的间隔大一倍。
+
+![img](./assets/bg2019032522.png)
+
+
+
+- space-between - 项目与项目的间隔相等，项目与容器边框之间没有间隔。
+
+![img](./assets/bg2019032523.png)
+
+
+
+- space-evenly - 项目与项目的间隔相等，项目与容器边框之间也是同样长度的间隔。
+
+![img](./assets/bg2019032524.png)
+
+`place-content`属性是`align-content`属性和`justify-content`属性的合并简写形式。
+
+```css
+place-content: <align-content> <justify-content>
+```
+
+下面是一个例子。
+
+```css
+place-content: space-around space-evenly;
+```
+
+如果省略第二个值，浏览器就会假定第二个值等于第一个值。
+
+
+
+### 3.8 grid-auto-columns 属性， grid-auto-rows 属性
+
+有时候，一些项目的指定位置，在现有网格的外部。比如网格只有3列，但是某一个项目指定在第5行。这时，浏览器会自动生成多余的网格，以便放置项目。
+
+`grid-auto-columns`属性和`grid-auto-rows`属性用来设置，浏览器自动创建的多余网格的列宽和行高。它们的写法与`grid-template-columns`和`grid-template-rows`完全相同。如果不指定这两个属性，浏览器完全根据单元格内容的大小，决定新增网格的列宽和行高。
+
+[下面的例子](https://jsbin.com/sayuric/edit?css,output)里面，划分好的网格是3行 x 3列，但是，8号项目指定在第4行，9号项目指定在第5行。
+
+```css
+.container {
+  display: grid;
+  grid-template-columns: 100px 100px 100px;
+  grid-template-rows: 100px 100px 100px;
+  grid-auto-rows: 50px; 
+}
+```
+
+上面代码指定新增的行高统一为50px（原始的行高为100px）。
+
+![img](./assets/bg2019032525.png)
+
+
+
+### 3.9 grid-template 属性， grid 属性
+
+`grid-template`属性是`grid-template-columns`、`grid-template-rows`和`grid-template-areas`这三个属性的合并简写形式。
+
+`grid`属性是`grid-template-rows`、`grid-template-columns`、`grid-template-areas`、 `grid-auto-rows`、`grid-auto-columns`、`grid-auto-flow`这六个属性的合并简写形式。
+
+从易读易写的角度考虑，还是建议不要合并属性，所以这里就不详细介绍这两个属性了。
+
+
+
+## 四、项目属性
+
