@@ -659,3 +659,134 @@ place-content: space-around space-evenly;
 
 ## 四、项目属性
 
+### 4.1 grid-column-start 属性， grid-column-end 属性， grid-row-start 属性， grid-row-end 属性
+
+项目的位置是可以指定的，具体方法就是指定项目的四个边框，分别定位在哪根网格线。
+
+- `grid-column-start`属性：左边框所在的垂直网格线
+- `grid-column-end`属性：右边框所在的垂直网格线
+- `grid-row-start`属性：上边框所在的水平网格线
+- `grid-row-end`属性：下边框所在的水平网格线
+
+```css
+.item-1 {
+  grid-column-start: 2;
+  grid-column-end: 4;
+}
+```
+
+[上面代码](https://jsbin.com/yukobuf/edit?css,output)指定，1号项目的左边框是第二根垂直网格线，右边框是第四根垂直网格线。
+
+![img](./assets/bg2019032526.png)
+
+上图中，只指定了1号项目的左右边框，没有指定上下边框，所以会采用默认位置，即上边框是第一根水平网格线，下边框是第二根水平网格线。
+
+除了1号项目以外，其他项目都没有指定位置，由浏览器自动布局，这时它们的位置由容器的`grid-auto-flow`属性决定，这个属性的默认值是`row`，因此会"先行后列"进行排列。读者可以把这个属性的值分别改成`column`、`row dense`和`column dense`，看看其他项目的位置发生了怎样的变化。
+
+[下面的例子](https://jsbin.com/nagobey/edit?html,css,output)是指定四个边框位置的效果。
+
+```css
+.item-1 {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row-start: 2;
+  grid-row-end: 4;
+}
+```
+
+![img](./assets/bg2019032527.png)
+
+这四个属性的值，除了指定为第几个网格线，还可以指定为网格线的名字。
+
+```css
+.item-1 {
+  grid-column-start: header-start;
+  grid-column-end: header-end;
+}
+```
+
+上面代码中，左边框和右边框的位置，都指定为网格线的名字。
+
+这四个属性的值还可以使用`span`关键字，表示"跨越"，即左右边框（上下边框）之间跨越多少个网格。
+
+```css
+.item-1 {
+  grid-column-start: span 2;
+}
+```
+
+[上面代码](https://jsbin.com/hehumay/edit?html,css,output)表示，1号项目的左边框距离右边框跨越2个网格。
+
+![img](./assets/bg2019032528.png)
+
+这与[下面的代码](https://jsbin.com/mujihib/edit?html,css,output)效果完全一样。
+
+```css
+.item-1 {
+  grid-column-end: span 2;
+}
+```
+
+使用这四个属性，如果产生了项目的重叠，则使用`z-index`属性指定项目的重叠顺序。
+
+
+
+### 4.2 grid-column 属性， grid-row 属性
+
+`grid-column`属性是`grid-column-start`和`grid-column-end`的合并简写形式，`grid-row`属性是`grid-row-start`属性和`grid-row-end`的合并简写形式。
+
+```css
+.item {
+  grid-column: <start-line> / <end-line>;
+  grid-row: <start-line> / <end-line>;
+}
+```
+
+下面是一个例子。
+
+```css
+.item-1 {
+  grid-column: 1 / 3;
+  grid-row: 1 / 2;
+}
+/* 等同于 */
+.item-1 {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row-start: 1;
+  grid-row-end: 2;
+}
+```
+
+上面代码中，项目`item-1`占据第一行，从第一根列线到第三根列线。
+
+这两个属性之中，也可以使用`span`关键字，表示跨越多少个网格。
+
+```css
+.item-1 {
+  background: #b03532;
+  grid-column: 1 / 3;
+  grid-row: 1 / 3;
+}
+/* 等同于 */
+.item-1 {
+  background: #b03532;
+  grid-column: 1 / span 2;
+  grid-row: 1 / span 2;
+}
+```
+
+[上面代码](https://jsbin.com/volugow/edit?html,css,output)中，项目`item-1`占据的区域，包括第一行 + 第二行、第一列 + 第二列。
+
+![img](./assets/bg2019032529.png)
+
+斜杠以及后面的部分可以省略，默认跨越一个网格。
+
+```css
+.item-1 {
+  grid-column: 1;
+  grid-row: 1;
+}
+```
+
+上面代码中，项目`item-1`占据左上角第一个网格。
