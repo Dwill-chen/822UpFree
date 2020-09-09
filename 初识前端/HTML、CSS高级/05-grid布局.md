@@ -790,3 +790,83 @@ place-content: space-around space-evenly;
 ```
 
 上面代码中，项目`item-1`占据左上角第一个网格。
+
+
+
+### 4.3 grid-area
+
+`grid-area`属性指定项目放在哪一个区域。
+
+```css
+.item-1 {
+  grid-area: e;
+}
+```
+
+[上面代码](https://jsbin.com/qokexob/edit?css,output)中，1号项目位于`e`区域，效果如下图。
+
+![img](./assets/bg2019032530.png)
+
+`grid-area`属性还可用作`grid-row-start`、`grid-column-start`、`grid-row-end`、`grid-column-end`的合并简写形式，直接指定项目的位置。
+
+```css
+.item {
+  grid-area: <row-start> / <column-start> / <row-end> / <column-end>;
+}
+```
+
+下面是一个[例子](https://jsbin.com/duyafez/edit?css,output)。
+
+```css
+.item-1 {
+  grid-area: 1 / 1 / 3 / 3;
+}
+```
+
+
+
+### 4.4 justify-self 属性， align-self 属性， place-self 属性
+
+`justify-self`属性设置单元格内容的水平位置（左中右），跟`justify-items`属性的用法完全一致，但只作用于单个项目。
+
+`align-self`属性设置单元格内容的垂直位置（上中下），跟`align-items`属性的用法完全一致，也是只作用于单个项目。
+
+```css
+.item {
+  justify-self: start | end | center | stretch;
+  align-self: start | end | center | stretch;
+}
+```
+
+这两个属性都可以取下面四个值。
+
+- start：对齐单元格的起始边缘。
+- end：对齐单元格的结束边缘。
+- center：单元格内部居中。
+- stretch：拉伸，占满单元格的整个宽度（默认值）。
+
+
+
+下面是`justify-self: start`的例子。
+
+```css
+.item-1  {
+  justify-self: start;
+}
+```
+
+![img](./assets/bg2019032532.png)
+
+`place-self`属性是`align-self`属性和`justify-self`属性的合并简写形式。
+
+```css
+place-self: <align-self> <justify-self>;
+```
+
+下面是一个例子。
+
+```css
+place-self: center center;
+```
+
+如果省略第二个值，`place-self`属性会认为这两个值相等。
