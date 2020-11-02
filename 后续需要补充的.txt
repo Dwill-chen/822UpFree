@@ -24,4 +24,7 @@
      JavaScript中：blogs和ajax也总结到js文件夹中
 
 
-7.  项目实战：vue2.x  vue3.x  react RN  小程序  公众号，不管项目大小，都做一做
+
+7.  各种类型报错的总结
+
+8.  项目实战：vue2.x  vue3.x  react RN  小程序  公众号，不管项目大小，都做一做
