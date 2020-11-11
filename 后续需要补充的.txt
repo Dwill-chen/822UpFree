@@ -20,6 +20,8 @@
 	后端数据、JSON数据，添加一个权限显示的字段、
 	eslint等一些列的东西加入该vue，作为一个初始化项目的架子，代码上传的时候，将json数据换成接口数据。
 
+	vue第九点，vue表单数据重置为空
+
 
      JavaScript中：blogs和ajax也总结到js文件夹中
 
