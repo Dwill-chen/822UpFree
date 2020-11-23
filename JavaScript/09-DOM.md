@@ -171,3 +171,198 @@ console.log(document.querySelector("#name"))
 console.log(document.querySelectorAll(".departments li"))
 ```
 
+
+
+### 3.2 间接查找
+
+通过已找到的其他标签来查找。
+
+```js
+let list = document.querySelector(".departments");
+// 1. 获取上一个兄弟节点
+console.log(list.previousElementSibling)
+// 2. 获取下一个兄弟节点
+console.log(list.nextElementSibling)
+// 3. 获取父节点
+console.log(list.parentElement)
+// 4. 获取所有子节点
+console.log(list.children)
+// 5. 获取第一个子节点
+console.log(list.firstElementChild)
+// 5. 获取最后一个子节点
+console.log(list.lastElementChild)
+```
+
+
+
+### 3.3 其他查询
+
+```javascript
+// 01. 查找文档类型
+console.log(document.doctype)
+// 02. 查找根节点
+console.log(document.documentElement)
+// 03. 查找Window对象
+console.log(document.defaultView)
+// 04. 查找head元素
+console.log(document.head)
+// 05. 查找body元素
+console.log(document.body)
+// 06. 查询页面中正在获取焦点的元素
+console.log(document.activeElement)
+// 07. 获取页面所有的<a>
+console.log(document.links)
+// 08. 获取页面所有的<form>
+console.log(document.forms)
+// 09. 获取页面所有的<img>
+console.log(document.images)
+// 10. 获取页面所有的<script>
+console.log(document.scripts)
+// 11. 获取页面所有的<link>
+console.log(document.styleSheets)
+// 12. 获取页面所有的<embeds>
+console.log(document.embeds)
+// 13. 获取/设置网页标题
+console.log(document.title)
+```
+
+
+
+## 四、节点操作
+
+### 4.1 创建节点
+
+```javascript
+// 创建节点
+let el = document.createElement("a");
+el.innerHTML = "a标签"
+el.href = ""
+document.body.appendChild(el);
+
+
+let el2 = "<div class='box'>CHINA</div>"
+let AllHtml = document.body.innerHTML
+document.body.innerHTML += el2;
+```
+
+
+
+### 4.2 操作属性
+
+```javascript
+<button onclick="removeTarget()">移除属性target</button>
+
+<script>
+    let el = document.createElement("a");
+    el.innerHTML = "Dwill-chen"
+
+    // 1. 设置、修改、读取属性 *
+    el.setAttribute("href", "https://github.com/Dwill-chen");
+    el.setAttribute("target", "_blank");
+    el.getAttribute("href");
+    // 2. 判断指定属性是否存在 *
+    console.log(el.hasAttribute("href"));
+    // 3. 移除指定属性 *
+    function removeTarget() {
+        el.removeAttribute("target");
+    }
+    // 4. 获取所有属性
+    console.log(el.attributes);
+    // 5. 添加自定义属性“data-*” *
+    el.dataset.desc = "Dwill-chen";
+	console.log(el.attributes);
+
+
+    document.body.appendChild(el)
+
+    let el2 = "<div class='box'>CHINA</div>"
+</script>
+```
+
+
+
+### 4.3 操作类名
+
+```javascript
+let el = document.createElement("a");
+el.innerHTML = "Dwill-chen"
+
+// 1. 通过classname操作类名 *
+// - 设置类名
+el.className = "link";
+el.className = "blog";
+// // - 访问类名
+console.log(el.className);
+// // - 移除类名
+el.className = "";
+
+// 2. 通过classList操作类名 
+// - 添加类名 *
+el.classList.add("link");
+el.classList.add("flag");
+// - 移除类名 *
+el.classList.remove("flag");
+// - 查询是否包含某个类名 *
+console.log(el.classList.contains("link")); // true
+// - 查询指定位置的类名
+console.log(el.classList.item(0)); // link
+// - 将类名集合转为字符串
+console.log(el.classList.toString())
+
+document.body.appendChild(el)
+```
+
+
+
+### 4.4 操作内容
+
+```javas
+let el = document.createElement("a");
+// 1. textContent
+// - 设置
+el.textContent = "Henry's github link";
+// - 读取
+console.log(el.textContent);
+
+// 2. innerHTML
+// - 设置
+el.innerHTML = "<mark>Henry's</mark> github link";
+// - 读取
+console.log(el.innerHTML)
+
+document.body.appendChild(el)
+```
+
+[^ tips]: textContent 设置显示文本，不能识别html标签，而innerHTML可以识别html标签。
+
+
+
+### 4.5 插入节点
+
+```javascript
+// 1. 在指定元素内追加(后面)
+tag.appendChild(el);
+tag.append(el);
+
+// 2. 在指定元素内追加(前面)
+tag.prepend(el)
+
+// 3. 在指定元素前加入
+tag.before(el);
+tag.insertBefore(el, 指定元素);
+
+// 4. 在指定元素后加入
+tag.after(el);
+
+// 5. 在指定元素的指定位置加入
+/*
+insertAdjacentHTML
+- beforebegin：在当前元素节点的前面。
+- afterbegin：作为当前元素的第一个子元素插入。
+- afterend：在当前元素节点的后面。
+- beforeend：作为当前元素的最后一个子元素插入。*/
+tag.insertAdjacentHTML("beforeend", "<h1>新插入的节点</h1>");
+```
+
+
+
