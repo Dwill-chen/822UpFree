@@ -340,28 +340,7 @@ document.body.appendChild(el)
 ### 4.5 插入节点
 
 ```javascript
-// 1. 在指定元素内追加(后面)
-tag.appendChild(el);
-tag.append(el);
 
-// 2. 在指定元素内追加(前面)
-tag.prepend(el)
-
-// 3. 在指定元素前加入
-tag.before(el);
-tag.insertBefore(el, 指定元素);
-
-// 4. 在指定元素后加入
-tag.after(el);
-
-// 5. 在指定元素的指定位置加入
-/*
-insertAdjacentHTML
-- beforebegin：在当前元素节点的前面。
-- afterbegin：作为当前元素的第一个子元素插入。
-- afterend：在当前元素节点的后面。
-- beforeend：作为当前元素的最后一个子元素插入。*/
-tag.insertAdjacentHTML("beforeend", "<h1>新插入的节点</h1>");
 ```
 
 
