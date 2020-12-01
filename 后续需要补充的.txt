@@ -30,7 +30,7 @@
 
 8.  项目实战：vue2.x  vue3.x  react RN  小程序  公众号，不管项目大小，都做一做
 
-9.  个人网站参考：https://www.xuanfengge.com/    里面的内容也可以参考，如ui设计、背景音乐、时间轴的信息发布等、个人网站支持md，传给后台数据库，再渲染到前台、https://www.cnblogs.com/hnyei/p/4605519.html
+9.  个人网站参考：https://www.xuanfengge.com/    里面的内容也可以参考，如ui设计、背景音乐、时间轴的信息发布等、个人网站支持md，传给后台数据库，再渲染到前台、https://www.cnblogs.com/hnyei/p/4605519.html、知识点的页面参考：https://www.aulence.com/#js-welcome
 
 10. 个人网站的 引导：https://www.zhangxinxu.com/wordpress/2016/03/better-black-mask-guide-overlay-method 或者 网站引导页插件：Intro.js
 
