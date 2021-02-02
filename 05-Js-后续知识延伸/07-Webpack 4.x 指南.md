@@ -676,9 +676,9 @@ $ yarn run build
 
 
 
-## 二、核心
+## 三、核心
 
-### 2.1 Entry
+### 3.1 Entry
 
 `Entry`：入口起点(entry point)，指示 webpack 应该使用哪个模块，来作为构建其内部依赖图的开始。进入入口起点后，webpack 会找出有哪些模块和库是入口起点（直接和间接）依赖的。
 
@@ -697,7 +697,7 @@ module.exports {
 
 
 
-### 2.2 Output
+### 3.2 Output
 
 `Output`：该属性告诉 webpack 在哪里输出它所创建的 bundles，以及如何命名这些文件。你可以通过在配置中指定一个 output 字段，来配置这些处理过程。
 
@@ -906,7 +906,7 @@ module.exports = {
 
 
 
-### 2.3 Loader
+### 3.3 Loader
 
 `webpack`本身只能打包`Javascript`文件，对于其他资源例如 `css`，图片，或者其他的语法集比如`jsx`，是没有办法加载的。 这就需要对应的`loader`将资源转化，加载进来。
 
@@ -1188,7 +1188,7 @@ output: {
 
 
 
-### 2.4 Plugins
+### 3.4 Plugins
 
 插件（Plugins）是用来拓展Webpack功能的，它们会在整个构建过程中生效，执行相关的任务。
 Loaders和Plugins常常被弄混，但是他们其实是完全不同的东西，可以这么来说，loaders是在打包构建过程中用来处理源文件的，一次处理一个，插件并不直接操作单个文件，它直接对整个构建过程起作用。
@@ -1491,7 +1491,7 @@ new CopyPlugin([
 
 
 
-### 2.5 延伸
+### 3.5 延伸
 
 #### a. context
 
@@ -1523,4 +1523,328 @@ module.exports = {
 
 
 #### c. 引用三方库
+
+##### c-1 局部引入
+
+```shell
+import $ from 'jquery';
+```
+
+
+
+##### c-2 全局引入
+
+```shell
+new webpack.ProvidePlugin({
+	$:"jquery", // npm
+  jQuery: "jQuery"
+})
+```
+
+
+
+#### d. watch的正确使用方法
+
+在初级开发阶段，使用webpack-dev-server就可以充当服务器和完成打包任务，但是随着你项目的进一步完成，可能需要前后台联调或者两个前端合并代码时，就需要一个公共的服务器了。这时候我们每次保存后手动打包显然效率太低，我们希望的场景是代码发生变化后，只要保存，webpack自动为我们进行打包。这个工具就是watch，这节课我们把wacht完全学会，你会发现在开发中更加的得心应手。
+
+**\> watch的配置**
+
+很多小伙伴认为–watch直接使用就可以，并没有什么需要讲的。其实这只是初级的用法，但是在学习一种技术时，我们必须要做到了解全部，也就是常说的知其然知其所以然。我们看下面的配置代码，我在代码中已经做出了解释。
+
+```javascript
+watchOptions:{
+    // 检测修改的时间，以毫秒为单位
+    poll:1000, 
+    // 防止重复保存而发生重复编译错误。这里设置的500是半秒内重复保存，不进行打包操作
+    aggregateTimeout:500, 
+    // 不监听的目录
+    ignored:/node_modules/, 
+}
+```
+
+上边的每一行配置都作了说明，有时候在没配置的情况下，直接用webpack –watch是不起作用的，这时候需要进行配置这些选项。
+
+配置好后，我们就可以痛快的使用watch了，在大型项目中，这大大加快了我们的开发效率，不用反复的手动打包了。
+
+
+
+#### e. 解析
+
+有时候我们不想路径暴露出去，可以使用取别名的形式：
+
+```javascript
+moudle.exports = {
+  resolve: {
+        // 创建别名
+        alias: {
+            "main-less": path.resolve(__dirname, './src/less/main.less'),
+            "font-icon": "font-awesome/css/font-awesome.css"
+        }
+    }
+}
+```
+
+这样在需要引入对应插件的时候，直接使用即可：
+
+```js
+require("normalize-css");
+require("font-icon");
+```
+
+
+
+#### f. 抽离公共文件
+
+当一部分代码需要反复被用到，反复请求浪费资源，将公共代码 抽离，需要时读取缓存即可
+
+```js
+output: {
+  ...
+  chunkFilename: "[name].chunk.js"
+}
+optimization: {
+    splitChunks: {
+        cacheGroups: {// 缓存组，缓存公共代码
+            // 首先：打包node_modules中的文件
+            vendor: {
+                test: /node_modules/,
+                name: "vendor",
+                minSize: 0, 
+                minChunks: 1,
+                chunks: "all",
+                priority: 1 
+            },
+            // 其次: 打包业务中公共代码
+            common: {
+                name: "common",
+                chunks: "all",  
+                minSize: 0,      
+                minChunks: 2,   
+                priority:0
+            }
+        }
+    }
+}
+```
+
+
+
+## 四、注意
+
+- 一旦修改了webpack的配置文件，必须重启服务或重新build。否则失效。
+- 如果自定义配置文件，切记在执行打包时一定要指定配置文件路径
+
+
+
+## 五、配置代码
+
+```javascript
+// 1. 引入模块
+const path = require('path');
+const webpack = require('webpack');
+// -> 处理Html
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+// -> 抽离css文件
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+// -> 消除未使用的css
+const glob = require('glob');
+const PurifyCSSPlugin = require('purifycss-webpack');
+// -> 压缩css
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+
+// 2. 导出配置
+module.exports = {
+    // 配置基础路径为当前目录（默认为配置文件所在的当前目录）
+    context: path.resolve(__dirname, './'),
+    // 打包模式 development - 未压缩 | production - 压缩
+    mode: 'development',
+    // 入口 string | array | object
+    entry: {
+        main: './src/js/index.js',
+        loginRegister: './src/js/login-register.js'
+    },
+    // 出口
+    output: {
+        // 输出目录/绝对路径
+        path: path.resolve(__dirname, './dist/'),
+        // 输出文件名
+        filename: 'static/js/[name]-bundle.js',
+        // 处理静态资源的路径
+        publicPath: 'http://127.0.0.1:8081/'
+    },
+    // 加载器
+    module: {
+        rules: [
+            // 编译es语法
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: "babel-loader",
+                    options: {
+                        presets: ["@babel/preset-env"]
+                    }
+                }
+            },
+            // 编译less
+            {
+                test: /\.less$/,
+                exclude: /node_modules/,
+                use: [
+                    // "style-loader",
+                    // => 使用插件中的loader代替style方式
+                    {
+                        loader: MiniCssExtractPlugin.loader,
+                        options: {
+                            reloadAll: true
+                        }
+                    },
+                    "css-loader",
+                    {
+                        loader: "postcss-loader",
+                        options: {
+                            ident: "postcss",
+                            plugins: [require("autoprefixer")]
+                        }
+                    },
+                    "less-loader"]
+            },
+            {
+                test: /\.css$/,
+                // exclude: /node_modules/,
+                use: [
+                    // "style-loader",
+                    // => 使用插件中的loader代替style方式
+                    {
+                        loader: MiniCssExtractPlugin.loader,
+                        options: {
+                            reloadAll: true
+                        }
+                    },
+                    "css-loader",
+                    {
+                        loader: "postcss-loader",
+                        options: {
+                            ident: "postcss",
+                            plugins: [require("autoprefixer")]
+                        }
+                    }
+                ]
+            },
+            // 处理HTML
+            {
+                test: /\.html$/,
+                use: "html-loader"
+            },
+            // 处理图片
+            {
+                test: /\.(jpg|jpeg|png|svg|gif)$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: "url-loader",
+                    options: {
+                        // <= 2kb，则转换成base64
+                        limit: 10000,
+                        // 图片名字
+                        name: "[name]-[hash:5].[ext]",
+                        // 输出路径
+                        outputPath: "static/images/",
+                        // 启用commonJS规范  
+                        esModule: false
+                    }
+                }
+            },
+            // 处理字体
+            {
+                test: /\.(woff|woff2|eot|ttf|otf)$/,
+                use: [{
+                    loader: 'url-loader',
+                    options: {
+                        name: '[name]-[hash:5].[ext]',
+                        limit: 5000,
+                        outputPath: 'static/fonts/'
+                    }
+                }]
+            }
+        ]
+    },
+    // 插件
+    plugins: [
+        // -> 版权声明
+        new webpack.BannerPlugin("版权耀哥所有，翻版必究！"),
+        // -> 热替换
+        new webpack.HotModuleReplacementPlugin(),
+        // -> 引入三方库
+        new webpack.ProvidePlugin({
+            $: "jquery", // npm
+            jQuery: "jQuery"
+        }),
+        // -> 抽离CSS文件
+        new MiniCssExtractPlugin({ filename: "static/css/[name].css" }),
+        // -> 消除未使用的css
+        new PurifyCSSPlugin({
+            // Give paths to parse for rules. These should be absolute!
+            paths: glob.sync(path.join(__dirname, "./src/**/*.html")),
+        }),
+        // -> 压缩css
+        new OptimizeCSSAssetsPlugin({
+            // 默认是全部的CSS都压缩，该字段可以指定某些要处理的文件
+            assetNameRegExp: /\.(sa|sc|c|le)ss$/g,
+            // 指定一个优化css的处理器，默认cssnano
+            cssProcessor: require('cssnano'),
+            cssProcessorPluginOptions: {
+                preset: ['default', {
+                    discardComments: { removeAll: true }, // 对注释的处理
+                    normalizeUnicode: false // 建议false,否则在使用unicode-range的时候会产生乱码
+                }]
+            },
+            canPrint: true  // 是否打印编译过程中的日志
+        }),
+        // —> 处理html
+        new HtmlWebpackPlugin({
+            // 模板文件
+            template: "./src/index.html",
+            // 文件名(相对于output.path)，可通过文件名设置目录，如 static/pages/detail.html
+            filename: "index.html",
+            // 静态资源位置
+            inject: "body",
+            // 指定输出文件所依赖的入口文件（*.js）的[name]
+            chunks: ["main"],
+            // 控制压缩
+            minify: {
+                collapseWhitespace: false,
+                removeComments: true,
+                removeAttributeQuotes: true,
+                removeEmptyAttributes: true
+            }
+        }),
+        new HtmlWebpackPlugin({
+            // 模板文件
+            template: "./src/pages/login-register.html",
+            // 文件名(相对于output.path)，可通过文件名设置目录，如 static/pages/detail.html
+            filename: "static/pages/login-register.html",
+            // 静态资源位置
+            inject: "body",
+            // 指定输出文件所依赖的入口文件（*.js）的[name]
+            chunks: ["loginRegister"],
+            // 控制压缩
+            minify: {
+                collapseWhitespace: false,
+                removeComments: true,
+                removeAttributeQuotes: true,
+                removeEmptyAttributes: true
+            }
+        }),
+    ],
+    // 开发服务
+    devServer: {
+        contentBase: path.resolve(__dirname, "./dist/"),
+        host: "127.0.0.1",
+        port: 8081,
+        open: true,
+        inline: true,
+        hot: true // 热替换
+    }
+};
+```
 
