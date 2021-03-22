@@ -2,3 +2,41 @@
 2.  demo -> CSS动画demo (哪些需要添加的描述，在文章末尾)
 3.  JavaScript中的每日一题
 4.  请开发人员在开发前阅读  中的内容整理
+5.  只接受分享的整理
+
+6.  开发中遇到的问题： 整理有道云笔记过来（34）、
+	微信搜——搭建项目模（结合下面几点，整理一个自己的模板）（看完Vue和TS后马上写，因为会用到vue和ts）
+	环境的配置（dev、pro、test之类的）https://www.cnblogs.com/zuoan-oopp/p/9101240.html
+	把api的封装、
+	elementui、
+	normalized、
+	common.js（如body、html的width和height为100%等）
+	根据JSON、或者后端返回的数据，动态生成路由、菜单  
+	http://www.voidcn.com/article/p-rfwijkue-bxd.html
+	https://www.cnblogs.com/HouJiao/archive/2020/06/16/13139901.html、
+	并生成动态的navbar，注意navbar父级的el-col，不然样式有问题
+	px2rem、
+	404页面、
+	后端数据、JSON数据，添加一个权限显示的字段、
+	eslint等一些列的东西加入该vue，作为一个初始化项目的架子，代码上传的时候，将json数据换成接口数据。
+
+	vue第九点，vue表单数据重置为空
+
+
+     JavaScript中：blogs和ajax也总结到js文件夹中
+
+
+7.  各种类型报错的总结：https://juejin.cn/post/6844903893432795149
+
+8.  项目实战：vue2.x  vue3.x  react RN  小程序  公众号，不管项目大小，都做一做
+
+9.  个人网站参考：https://www.xuanfengge.com/    里面的内容也可以参考，如ui设计、背景音乐、时间轴的信息发布等、个人网站支持md，传给后台数据库，再渲染到前台、https://www.cnblogs.com/hnyei/p/4605519.html、知识点的页面参考：https://www.aulence.com/#js-welcome
+     一定要包含一个 form表单——类似运营平台、公安对接下拉框切换，form字段改变的（并且自己设计好，不然后续修改麻烦）
+
+10. 个人网站的 引导：https://www.zhangxinxu.com/wordpress/2016/03/better-black-mask-guide-overlay-method 或者 网站引导页插件：Intro.js
+
+11. 快速创建标签快捷方式-CSS基础最后一章，内附地址，需总结
+
+12. 前端抓包
+
+13.老李公众号的内容

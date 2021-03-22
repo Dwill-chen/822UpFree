@@ -1,0 +1,650 @@
+官网地址：<https://www.gulpjs.com.cn/>
+
+## 一、简介
+
+gulp是前端开发过程中对代码进行构建的工具，是自动化项目的构建利器；gulp不仅能对网站资源进行优化，而且在开发过程中很多重复的任务能够使用正确的工具自动完成；使用gulp，我们不仅可以很愉快的编写代码，而且大大提高我们的工作效率。
+
+gulp是基于Nodejs的自动任务运行器， 她能自动化地完成 javascript/sass/less/html/image/css 等文件的的测试、检查、合并、压缩、格式化、浏览器自动刷新、部署文件生成，并监听文件在改动后重复指定的这些步骤。在实现上，gulp借鉴了Unix操作系统的管道（pipe）思想，前一级的输出，直接变成后一级的输入，使得在操作上非常简单。通过本章，我们将学习如何使用gulp来改变开发流程，从而使开发更加快速高效。
+
+
+
+## 二、gulp vs grunt
+
+首先看一篇文章 [Gulp的目标是取代Grunt](http://www.infoq.com/cn/news/2014/02/gulp)
+
+根据gulp的文档，它努力实现的主要特性是：
+
+- 易于使用：采用代码优于配置策略，gulp让简单的事情继续简单，复杂的任务变得可管理。
+- 高效：通过利用node.js强大的流，不需要往磁盘写中间文件，可以更快地完成构建。
+- 高质量：gulp严格的插件指导方针，确保插件简单并且按你期望的方式工作。
+- 易于学习：通过把API降到最少，你能在很短的时间内学会gulp。构建工作就像你设想的一样：是一系列流管道。
+
+Gulp通过**流和代码优于配置**的策略来简化任务编写的工作。
+
+
+
+## 三、安装
+
+在学习前，先谈谈大致使用gulp的步骤，给读者以初步的认识。通过npm或yarn安装gulp，其次在项目里安装所需要的gulp插件，然后新建gulp的配置文件 *“gulpfile.js”* 并写好配置信息（定义gulp任务），最后通过命令提示符运行gulp任务即可。
+
+安装gulp -> 安装gulp插件 -> 配置任务 -> 运行任务
+
+```shell
+$ npm i -D gulp
+OR
+$ yarn add -D gulp
+```
+
+查看版本：
+
+```shell
+$ ./node_modules/.bin/gulp -v
+CLI version: 2.3.0
+Local version: 4.0.2
+```
+
+
+
+## 四、gulp 初体验
+
+### 4.1 gulpfile.js
+
+“gulpfile.js”  是gulp的配置文件，位于项目根目录。接下来在根目录中新建新建 “gulpfile.js”  文件，然后配置任务：
+
+```javascript
+// 1. 引入模块
+const gulp = require("gulp");
+// 2. 定义任务
+gulp.task("default", (done) => {
+    console.log("Hello, gulp!");
+    done();
+});
+```
+
+
+
+### 4.2 运行gulp
+
+```shell
+$ gulp task-name
+```
+
+```shell
+./node_modules/.bin/gulp default
+```
+
+> 提示：当执行 `gulp default ` 或 `gulp ` 将会调用 **default** 任务里的所有任务。
+
+```shell
+PS C:\Users\41796\Desktop\学习\index> ./node_modules/.bin/gulp test
+[11:36:06] Using gulpfile ~\Desktop\学习\index\gulpfile.js
+[11:36:06] Starting 'test'...
+Hello, Gulp!
+[11:36:06] Finished 'test' after 5.47 ms
+
+PS C:\Users\41796\Desktop\学习\index> ./node_modules/.bin/gulp
+[11:38:50] Using gulpfile ~\Desktop\学习\index\gulpfile.js
+[11:38:50] Starting 'default'...
+Hello, Gulp!
+[11:38:50] Finished 'default' after 5.62 ms
+PS C:\Users\41796\Desktop\学习\index> 
+```
+
+到这里，你已经学会了gulp安装与基本使用。
+
+我们也可以借助 package.json 设置命令行操作，如下所示：
+
+```json
+"scripts": {
+  "build": "./node_modules/.bin/gulp"
+}
+```
+
+这样，我们只需要在终端输入如下指令即可：
+
+```shell
+$ npm run build
+OR
+$ yarn run build
+```
+
+
+
+## 五、gulp API
+
+使用gulp，仅需知道4个API即可：`gulp.task()`, `gulp.src()`, `gulp.dest()`, `gulp.watch()`，所以很容易就能掌握。
+
+### 5.1 gulp.src()
+
+在介绍这个API之前我们首先来说一下gulp的工作方式，gulp 使用的是Nodejs中的 [stream](http://nodejs.org/api/stream.html) (流)，首先获取到需要的 stream，然后可以通过 stream 的 `pipe()`   方法把流导入到你想要的地方，比如Gulp的插件中，经过插件处理后的流又可以继续导入到其他插件中，当然也可以把流写入到文件中。所以gulp是以 “stream” 为媒介的，它不需要频繁的生成临时文件。再回到正题上来，`gulp.src()` 方法正是用来获取流的，但要注意这个流里的内容不是原始的文件流，而是一个虚拟文件对象流( [Vinyl files](https://github.com/wearefractal/vinyl-fs) )，这个虚拟文件对象中存储着原始文件的路径、文件名、内容等信息，这个我们暂时不用去深入理解，你只需简单的理解可以用这个方法来读取你需要操作的文件就行了。其语法为：
+
+```
+gulp.src(globs[, options])
+```
+
+> 参数解读
+
+1. `globs`：参数是文件匹配模式(类似正则表达式)，用来匹配文件路径(包括文件名)，当然这里也可以直接指定某个具体的文件路径。当有多个匹配模式时，该参数可以为一个数组。
+2. `options`：可选参数，通常情况下我们不需要用到。
+
+下面我们重点说说 gulp 用到的 `glob` 的匹配规则以及一些文件匹配技巧。
+
+gulp 内部使用了 [node-glob](https://github.com/isaacs/node-glob) 模块来实现其文件匹配功能。我们可以使用下面这些特殊的字符来匹配我们想要的文件：
+
+| 符号                         | 描述                                                         |
+| :--------------------------- | ------------------------------------------------------------ |
+| `*`                          | 匹配文件路径中的0个或多个字符，但不会匹配路径分隔符 `/`，除非路径分隔符出现在末尾。 |
+| `**`                         | 匹配文件路径中的0个或多个目录及其子目录，需要单独出现，即它左右不能有其他东西了。如果出现在末尾，也能匹配文件。 |
+| `?`                          | 匹配文件路径中的单个字符(不会匹配路径分隔符)                 |
+| `[...]`                      | 匹配方括号中出现的字符中的任意一个，当方括号中第一个字符为`^`或`!`时，则表示不匹配方括号中出现的其他字符中的任意一个，类似js正则表达式中的用法。 |
+| `!(pattern|pattern|pattern)` | 匹配任何与括号中给定的任一模式都不匹配的                     |
+| `?(pattern|pattern|pattern)` | 匹配括号中给定的任一模式0次或1次，类似于js正则中的  “ (pattern\|pattern\|pattern)? ” |
+| `+(pattern|pattern|pattern)` | 匹配括号中给定的任一模式至少1次，类似于js正则中的     “(pattern\|pattern\|pattern)+” |
+| `*(pattern|pattern|pattern)` | 匹配括号中给定的任一模式0次或多次，类似于js正则中的 “(pattern\|pattern\|pattern)\*” |
+| `@(pattern|pattern|pattern)` | 匹配括号中给定的任一模式1次，类似于js正则中的   “(pattern\|pattern\|pattern)” |
+
+
+当有多种匹配模式时可以使用数组
+
+```javascript
+gulp.src(['js/*.js','css/*.css','*.html'])
+```
+
+使用数组的方式还有一个好处就是可以很方便的使用排除模式，在数组中的单个匹配模式前加上  `!`  即是排除模式，它会在匹配的结果中排除这个匹配，要注意一点的是不能在数组中的第一个元素中使用排除模式：
+
+```javascript
+gulp.src(['*.js’,'!b*.js']) // 匹配所有js文件，但排除掉以b开头的js文件
+gulp.src(['!b*.js','*.js’]) // 不会排除任何文件，因为排除模式不能出现在数组的第一个元素中
+```
+
+```javascript
+gulp.src('./js/*.js')                       // * 匹配js文件夹下所有.js格式的文件
+gulp.src('./js/**/*.js')                    // ** 匹配js文件夹的0个或多个子文件夹
+gulp.src(['./js/*.js','!./js/index.js'])    // ! 匹配除了index.js之外的所有js文件
+gulp.src('./js/**/{main,common}.js')        // {} 匹配{}里的文件名
+```
+
+
+
+### 5.2 gulp.dest()
+
+gulp.dest() 方法是用来写文件的，其语法为：
+
+```
+gulp.dest(path[,options])
+```
+
+> 参数解读
+
+1. `path`：为写入文件的路径
+2. `options`：为一个可选的参数对象，通常我们不需要用到
+
+要想使用好 gulp.dest() 这个方法，就要理解给它传入的路径参数与最终生成的文件的关系。
+gulp的使用流程一般是这样子的：首先通过 gulp.src() 方法获取到我们想要处理的文件流，然后把文件流通过pipe 方法导入到 gulp 的插件中，最后把经过插件处理后的流再通过pipe方法导入到 gulp.dest() 中，gulp.dest() 方法则把流中的内容写入到文件中，这里首先需要弄清楚的一点是，我们给 gulp.dest() 传入的路径参数，只能用来指定要生成的文件的目录，而不能指定生成文件的文件名，它生成文件的文件名使用的是导入到它的文件流自身的文件名，所以 **生成的文件名是由导入到它的文件流决定的** ，即使我们给它传入一个带有文件名的路径参数，然后它也会把这个文件名当做是目录名，例如：
+
+```javascript
+// 1. 引入模块
+const gulp = require("gulp");
+// 2. 定义任务
+gulp.task("default", (done) => {
+    gulp.src("./src/js/index.js")
+        .pipe(gulp.dest("./dist/static/js/app.js"));
+    done();
+});
+
+// 最终生成的文件路径为 ./dist/static/js/app.js/index.js,而不是 ./dist/static/js/app.js
+```
+
+下面说说生成的文件路径与我们给 gulp.dest() 方法传入的路径参数之间的关系。将dest参数路径替换src中的base路径。base路径就是src中通配符之前的那个路径。
+
+```js
+gulp.src("./src/js/index.js"); // base -> ./src/js/
+gulp.src("./src/**/*.js"); // base -> ./src/
+
+gulp.dest("./dist");
+// -> ./dist/index.js
+// -> ./dist/**/*.js
+```
+
+
+
+### 5.3 gulp.task()
+
+gulp.task 方法用来定义任务，其语法为：
+
+```
+task([taskName], taskFunction)
+
+gulp.task(name[, deps], fn)
+// name 为任务名
+// deps 是当前定义的任务需要依赖的其他任务，为一个数组。当前定义的任务会在所有依赖的任务执行完毕后才开始执行。如果没有依赖，则可省略这个参数
+// fn 为任务函数，我们把任务要执行的代码都写在里面。该参数也是可选的。
+
+gulp.task('mytask', ['array', 'of', 'task', 'names'], function() { //定义一个有依赖的任务
+    // Do something
+}); 
+```
+
+```javascript
+gulp.task("a", (done) => {
+    // 任务完成
+    done();
+});
+```
+
+- `gulp.parallel()`：并行执行
+
+  ```js
+  gulp.task("default", gulp.parallel("a","b"))
+  ```
+
+- `gulp.series()`：顺序执行
+
+  ```js
+  gulp.task("default", gulp.series("a","b"));
+  ```
+
+如果任务相互之间没有依赖，任务会按你书写的顺序来执行，如果有依赖的话则会先执行依赖的任务。
+但是如果某个任务所依赖的任务是异步的，就要注意了，gulp并不会等待那个所依赖的异步任务完成，而是会接着执行后续的任务。例如：
+
+```javascript
+// 1. 引入模块
+const gulp = require("gulp");
+// 2. 定义任务
+gulp.task("a", (done) => {
+    setTimeout(() => {
+        console.log("a is complete!");
+    }, 3000);
+    done();
+})
+gulp.task("b", (done) => {
+    console.log("b is complete!");
+    done();
+})
+gulp.task("default", gulp.series("a", "b"));
+```
+
+```shell
+$ npm run build
+
+> gulp-demo@1.0.0 build /Users/lihongyao/Desktop/gulp-demo
+> gulp
+
+[11:14:28] Using gulpfile ~/Desktop/gulp-demo/gulpfile.js
+[11:14:28] Starting 'default'...
+[11:14:28] Starting 'a'...
+[11:14:28] Finished 'a' after 1.23 ms
+[11:14:28] Starting 'b'...
+b is complete!
+[11:14:28] Finished 'b' after 500 μs
+[11:14:28] Finished 'default' after 4.52 ms
+a is complete!
+```
+
+可以看到，b任务输出在a任务之前，因为a任务里面有异步操作。那如果我们想等待异步任务中的异步操作完成后再执行后续的任务，该怎么做呢？
+有三种方法可以实现：
+
+**方法1：**
+
+将 `done()` 放在异步操作内就行啦。
+
+```javascript
+gulp.task("a", (done) => {
+    setTimeout(() => {
+        console.log("a is complete!");
+        done(); 
+    }, 3000);  
+})
+```
+
+**方法2：**
+
+定义任务时返回一个流对象。适用于任务就是操作gulp.src获取到的流的情况。
+
+```javascript
+gulp.task('one',function(cb){
+  var stream = gulp.src('client/**/*.js')
+      .pipe(dosomething()) // dosomething() 中有某些异步操作
+      .pipe(gulp.dest('build'));
+    return stream;
+});
+```
+
+**方法3：**
+
+返回一个promise对象，例如
+
+```javascript
+const gulp = require("gulp");
+const Q = require('q'); 
+
+// 定义任务
+gulp.task("a", (cb) => {
+    let deferred = Q.defer();
+    setTimeout(() => {
+        console.log("task ‘a’ is finshed.");
+        deferred.resolve();
+    }, 2000);
+    // 执行下一任务
+    return deferred.promise;
+});
+
+gulp.task("b", (cb) => {
+    console.log("task ‘b’ is finshed.");
+    // 执行下一任务
+    cb();
+});
+
+gulp.task("series", gulp.series("a","b"));
+```
+
+
+
+### 5.4 gulp.watch()
+
+gulp.watch() 用来监视文件的变化，当文件发生变化后，我们可以利用它来执行相应的任务，例如文件压缩等。其语法为：
+
+```javascript
+gulp.watch(glob[, opts], tasks)
+```
+
+> 参数解读
+
+1. `glob`：为要监视的文件匹配模式，规则和用法与 *gulp.src()* 方法中的 `glob` 相同。
+2. `opts`：为一个可选的配置对象，通常不需要用到。
+3. `tasks`：为文件变化后要执行的任务，为一个数组
+
+```javascript
+gulp.watch("./src/js/*.js", gulp.parallel("handleJS"));
+```
+
+
+
+## 六、gulp 插件
+
+### 6.1 插件
+
+- [del](<https://www.npmjs.com/package/del>)：删除文件
+- [vinyl-paths](<https://www.npmjs.com/package/vinyl-paths>)：在管道中操作文件（比如在管道中删除）
+- [gulp-less](https://www.npmjs.com/package/gulp-less)：编译LESS
+- [gulp-sass](https://www.npmjs.com/package/gulp-sass)：编译SASS
+- [gulp-babel](https://www.npmjs.com/package/gulp-babel)：编译ECMAScript
+- [gulp-postcss](https://www.npmjs.com/package/gulp-postcss)：处理CSS，可以压缩(cssnano)，自动注入前缀(autoprefixer)
+- [gulp-uglify](https://www.npmjs.com/package/gulp-uglify)：压缩JavaScript
+- [gulp-htmlmin](https://www.npmjs.com/package/gulp-htmlmin)：压缩HTML
+- [gulp-imagemin](https://www.npmjs.com/package/gulp-imagemin)：压缩图片
+- [gulp-cache](https://github.com/jgable/gulp-cache)：缓存，可避免重复压缩图片
+- [gulp-rename](<https://www.npmjs.com/package/gulp-rename>)：文件更名
+- [gulp-rev](https://www.npmjs.com/package/gulp-rev)：给静态资源文件名添加hash值
+- [gulp-load-plugins](https://www.npmjs.com/package/gulp-load-plugins)：插件加载
+- [gulp-if](https://www.npmjs.com/package/gulp-if)：流控制（相当于JavaScript中的if语句）
+- [gulp-concat](https://www.npmjs.com/package/gulp-concat)：文件合并
+- [gulp-filter](https://www.npmjs.com/package/gulp-filter)：文件过滤
+
+
+
+### 6.2 [gulp-useref](<https://www.npmjs.com/package/gulp-useref>)
+
+说明：它可以把html里零碎的这些引入合并成一个文件，但是它不负责代码压缩。
+
+安装：
+
+```shell
+$ npm i -D gulp-useref 
+or
+$ yarn add -D gulp-useref 
+```
+
+示例：
+
+```html
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="UTF-8">
+    <title>gulp testing</title>
+
+    <!-- build:css css/common.css -->
+    <link rel="stylesheet" href="css/one.css">
+    <link rel="stylesheet" href="css/two.css">
+    <!-- endbuild -->
+
+</head>
+<body>
+
+<!-- build:js js/common.js -->
+<script type="text/javascript" src="js/one.js"></script>
+<script type="text/javascript" src="js/two.js"></script>
+<!-- endbuild -->
+
+</body>
+
+</html>
+```
+
+```javascript
+const gulp = require('gulp');
+const useref = require('gulp-useref');
+
+gulp.task('default', function () {
+   gulp.src('src/*.html')
+       .pipe(useref())
+       .pipe(gulp.dest('dist/'));
+});
+```
+
+替换之后的index.html中就会变成：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="css/common.css">
+</head>
+<body>
+
+<script src="js/common.js"></script>
+</body>
+</html>
+```
+
+
+
+### 6.3 gulp-rev-replace
+
+说明：利用gulp-rev生成的manifest.json表替换html中的css和js引用。
+
+安装：
+
+```shell
+$ npm install --save-dev gulp-rev-replace 
+```
+
+示例：
+
+```javascript
+const gulp = require('gulp');
+const rev = require('gulp-rev');
+const revReplace = require('gulp-rev-replace');
+const useref = require('gulp-useref');
+
+gulp.task('default', function () {
+    gulp.src('src/index.html')
+        .pipe(useref())                         // 替换HTML中引用的css和js
+        .pipe(rev())                            // 给css,js,html加上hash版本号
+        .pipe(revReplace())                     // 把引用的css和js替换成有版本号的名字
+        .pipe(gulp.dest('dist'))
+});
+```
+
+> 注：
+>
+> gulp-useref ，gulp-rev, gulp-rev-replace 一般都是连用，他们三个的功能就是，把html文件中加了特定注释的文件区块进行合并，然后gulp-rev对文件加上md5，生成 manifest.json，gulp-rev-replace再根据manifest.json文件替换html中对应的路径
+
+
+
+### 6.4 [gulp-html-replace](https://www.npmjs.com/package/gulp-html-replace)
+
+说明：替换html中的构建块。
+
+安装：
+
+```shell
+$ npm i -D gulp-html-replace
+```
+
+示例：
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- build:css-->
+    <link rel="stylesheet" href="css/one.css">
+    <link rel="stylesheet" href="css/two.css">
+    <!-- endbuild -->
+
+</head>
+<body>
+
+<!-- build:js -->
+<script src="js/one.js"></script>
+<script src="js/two.js"></script>
+<!-- endbuild -->
+
+</body>
+</html>
+```
+
+```javascript
+var gulp = require('gulp');
+var htmlreplace = require('gulp-html-replace');
+
+gulp.task('default', function() {
+    gulp.src('src/index.html')
+        .pipe(htmlreplace({
+            'css': 'css/styles.min.css',
+            'js': 'js/bundle.min.js'
+        }))
+        .pipe(gulp.dest('dist/'));
+});
+```
+
+替换之后的index.html中就会变成：
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="css/styles.min.css">
+</head>
+<body>
+
+<script src="js/bundle.min.js"></script>
+</body>
+</html>
+```
+
+
+
+## 七、代码同步
+
+### 7.1 [browser-sync](http://www.browsersync.cn/)
+
+说明：自动刷新，当代码变化时，它可以帮我们自动刷新页面
+
+安装：
+
+```shell
+$ yarn add -D browser-sync
+```
+
+示例：
+
+```javascript
+const gulp = require("gulp");
+const less = require("gulp-less");
+const autoprefixer = require("gulp-autoprefixer");
+const browserSync = require("browser-sync").create();
+
+// 创建一个browser-sync任务
+gulp.task('browserSync', () => {
+    browserSync.init({
+		// 服务配置
+		server: {
+			// 设置服务器根目录
+            baseDir: './dist'
+        },
+        port: 8081
+	})
+});
+
+// 定义一个handleLess任务
+gulp.task("handleLess", () => {
+	// 任务针对的文件
+	gulp.src("./src/less/*.less")
+		.pipe(less())
+		.pipe(autoprefixer())
+		.pipe(gulp.dest("./dist/static/css/"))
+        // 实时刷新
+		.pipe(browserSync.reload({ stream: true}));
+});
+
+
+// 按任务顺序执行
+gulp.task("watch", ["browserSync", "compile-less"],function () {
+	gulp.watch("./src/less/*.less", ["handleLess"]);
+});
+```
+
+
+
+## 八、Gulp 实战
+
+```javascript
+// 1. 导入gulp
+const gulp = require("gulp");
+const $    = require("gulp-load-plugins")();
+const del  = require("del"); // 清理文件
+
+// 2. 定义任务
+gulp.task("del", (deone) => {
+    del.sync(["./static/dist"])
+})
+gulp.task("handleLESS", (done) => {
+    gulp.src("./src/less/*")
+        .pipe($.less()) // 编译
+        .pipe($.autoprefixer()) // 注入前缀
+        .pipe($.cleanCss()) // 压缩
+        .pipe($.rename({suffix: ".min"})) // 重命名
+        .pipe(gulp.dest("./dist/static/css"))
+    done();
+})
+gulp.task("handleJS", (done) => {
+    gulp.src("./src/js/*")
+        .pipe($.babel({presets: ["@babel/env"]})) // 编译
+        .pipe($.uglify()) // 压缩
+        .pipe($.rename({suffix: ".min"})) // 重命名
+        .pipe(gulp.dest("./dist/static/js"))
+    done();
+})
+gulp.task("handleIMG", (done) => {
+    gulp.src("./src/images/*")
+        .pipe($.imagemin())
+        .pipe(gulp.dest("./dist/static/images"))
+    done();
+})
+
+gulp.task("default", gulp.parallel("del", "handleIMG", "handleJS", "handleLESS"));
+// 3. 监听
+gulp.watch("./src/js/*", gulp.parallel("handleJS"));
+gulp.watch("./src/less/*", gulp.parallel("handleLESS"));
+gulp.watch("./src/images/*", gulp.parallel("handleIMG"));
+```
+
+
+
+更多内容参考：https://www.jianshu.com/p/ae2af66d9010
